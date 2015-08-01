@@ -1,12 +1,13 @@
-// libs
+
+/*
+	Dependencies.
+*/
 var _ = require('underscore');
 var http = require('http');
 
 
 /*
 	Parser
-
-
 */
 var Parser = function(db, redditName, fields) {
 	this.db = db;
@@ -17,10 +18,10 @@ var Parser = function(db, redditName, fields) {
 
 /*
 	Select fields from raw JSON
-
 */
-Parser.prototype.selectFields = function(jsonArticles) {
+Parser.prototype.selectFields = function(data) {
 	var parser = this;
+	var jsonArticles = JSON.parse(data)
 	var rawArticles = jsonArticles.data.children;
 	var articles = [];
 	
@@ -41,7 +42,6 @@ Parser.prototype.selectFields = function(jsonArticles) {
 
 /*
 	Remove excluded fields
-
 */
 Parser.prototype.exclude = function(articles, fields) {
 	_.each(articles, function(element) {
@@ -56,7 +56,6 @@ Parser.prototype.exclude = function(articles, fields) {
 
 /*
 	Get JSON from site
-
 */
 Parser.prototype.parseReddit = function(callback) {
 	var options = {
@@ -67,14 +66,14 @@ Parser.prototype.parseReddit = function(callback) {
 	};
 
 	http.get(options, function(res) {
-		var content = '';
+		var data = '';
         
         res.on('data', function(d) {
-            content += d;
+            data += d;
         });
 
         res.on('end', function() {
-        	callback(null, JSON.parse(content));
+        	callback(null, data);
 		});
 	});
 };
@@ -82,7 +81,6 @@ Parser.prototype.parseReddit = function(callback) {
 
 /*
 	Return last reddit update
-
 */
 Parser.prototype.getLastParsing = function(callback) {
 	var redditName = this.redditName;
@@ -104,7 +102,6 @@ Parser.prototype.getLastParsing = function(callback) {
 
 /*
 	Insert or update reddit’s last parsing time
-
 */
 Parser.prototype.updateLastParsing = function(time, callback) {
 	var redditName = this.redditName;
@@ -127,7 +124,6 @@ Parser.prototype.updateLastParsing = function(time, callback) {
 								if (err) {
 									callback(err);
 								} else {
-									console.log('insert last parsing time');
 									callback(null, result[0].lastParsing);
 								}
 							}
@@ -143,7 +139,6 @@ Parser.prototype.updateLastParsing = function(time, callback) {
 								if (err) {
 									callback(err);
 								} else {
-									console.log('update last parsing time');
 									callback(null, time);
 								}
 							}
@@ -158,30 +153,33 @@ Parser.prototype.updateLastParsing = function(time, callback) {
 
 /*
 	Insert articles to database
-
 */
 Parser.prototype.insertArticles = function(callback) {
 	var parser = this;
 
-	parser.parseReddit(function(err, jsonArticles) {
+	parser.parseReddit(function(err, data) {
 		if (err) {
 			callback(err);
 		} else {
-			var clearedArticles = parser.selectFields(jsonArticles);
-
-			parser.db.collection('articles', function(err, collection) {
-				if (err) {
-					callback(err);
-				} else {
-					collection.insert(clearedArticles, function(err, result) {
-						if (err) {
-				   			callback(err);
-				   		} else {
-				   			callback(null, result);
-				   		}
-				    });
-				}
-			});
+			try {
+				var clearedArticles = parser.selectFields(data);
+			
+				parser.db.collection('articles', function(err, collection) {
+					if (err) {
+						callback(err);
+					} else {
+						collection.insert(clearedArticles, function(err, result) {
+							if (err) {
+					   			callback(err);
+					   		} else {
+					   			callback(null, result);
+					   		}
+					    });
+					}
+				});
+			} catch (err) {
+				callback(new Error('Can not parse JSON.'));
+			}
 		}
 	});
 };
@@ -189,8 +187,6 @@ Parser.prototype.insertArticles = function(callback) {
 
 /*
 	Update articles in database if it’s necessary
-
-
 */
 Parser.prototype.updateArticles = function(callback) {
 	var parser = this;
@@ -212,7 +208,6 @@ Parser.prototype.updateArticles = function(callback) {
 									parser.updateLastParsing(
 										Date.now()
 										, function(err, lastParsing) {
-											console.log(parser.redditName, 'update', lastParsing);
 											callback(err);
 										}
 									);
@@ -223,7 +218,6 @@ Parser.prototype.updateArticles = function(callback) {
 				}
 			});
 		} else {
-			console.log(parser.redditName, 'not update', lastParsing);
 			callback(null);
 		}
 	});
@@ -232,7 +226,6 @@ Parser.prototype.updateArticles = function(callback) {
 
 /*
 	Get articles for reddit
-
 */
 Parser.prototype.getPlainArticles = function(sort, order, callback) {
 	var parser = this;
@@ -270,7 +263,6 @@ Parser.prototype.getPlainArticles = function(sort, order, callback) {
 
 /*
 	Get top articles for reddit
-
 */
 Parser.prototype.getTopArticles = function(sort, order, callback) {
 	var parser = this;

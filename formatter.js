@@ -1,11 +1,12 @@
-// libs
+
+/*
+	Dependencies.
+*/
 var _ = require('underscore');
 
 
 /*
 	Formatter
-
-
 */
 var Formatter = function(data) {
 	this.data = data.slice();
@@ -14,7 +15,6 @@ var Formatter = function(data) {
 
 /*
 	Make sql insert header
-
 */
 Formatter.prototype.sqlInsertHead = function(count, tableName, fieldNames) {
 	// process
@@ -38,8 +38,6 @@ Formatter.prototype.sqlInsertHead = function(count, tableName, fieldNames) {
 
 /*
 	Format array of object to CSV
-
-
 */
 Formatter.prototype.formatToCsv = function(delimiter) {
 	var formatter = this;
@@ -64,8 +62,6 @@ Formatter.prototype.formatToCsv = function(delimiter) {
 
 /*
 	Format array of objects to SQL
-
-	
 */
 Formatter.prototype.formatToSql = function(tableName, fieldNames) {
 	var formatter = this;

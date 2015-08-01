@@ -1,0 +1,58 @@
+doctype html
+html(lang="en" ng-app="RedditParser")
+	head
+		title reddit-parser
+
+		script(src="/bower_components/angular/angular.js")
+		link(rel="stylesheet" href="/bower_components/normalize.css/normalize.css")
+		link(rel="stylesheet" href="/bower_components/angular-busy/dist/angular-busy.min.css")
+		script(src="/bower_components/angular-busy/dist/angular-busy.min.js")
+
+		link(rel="stylesheet" href="/css/main.css")
+		script(src="/js/controllers.js")
+	body
+		div.main
+			div.parser-form(ng-controller="ParserFormController")
+				h2.parser-form__header reddit-parser
+				div.parser-form__settings
+					div.parser-form__item
+						label.parser-form__item-label Reddit:
+						div.parser-form__item-description http://www.reddit.com/r/
+						input(type="text" ng-model="reddit").parser-form__item-field
+					div.parser-form__item
+						label.parser-form__item-label Source
+						select(ng-model="source" ng-change="changeDepending()").parser-form-item
+							option(value="plain") plain
+							option(value="top") top
+					div.parser-form__item
+						label.parser-form__item-label Format:
+						select(ng-model="settings.format").parser-form__item-field
+							option(value="csv") csv
+							option(value="sql") sql
+					div.parser-form__item
+						label.parser-form__item-label Sorting:
+						select(ng-model="settings.sort").parser-form__item-field
+							option(ng-show="source == 'plain'" value="id") id
+							option(ng-show="source == 'plain'" value="title") title
+							option(ng-show="source == 'plain'" value="created_utc") created_utc
+							option(ng-show="source == 'top'" value="domain") domain
+							option(ng-show="source == 'top'" value="count") count
+							option(value="score") score
+						select(ng-model="settings.order").parser-form__item-field
+							option(value="asc") asc
+							option(value="desc") desc
+					div(ng-show="settings.format == 'csv'").parser-form__item
+						label.parser-form__item-label Delimiter: 
+						input(type="text" ng-model="settings.delimiter" ng-trim="false").parser-form__item-field
+					div(ng-show="settings.format == 'sql'").parser-form__item
+						label.parser-form__item-label Table:
+						input(ng-model="settings.table")
+					div(ng-show="settings.format == 'sql'").parser-form__item
+						label.parser-form__item-label Columns:
+						input(ng-model="settings.columns")
+					div.parser-form__item.parser-form__item
+						label.parser-form__item-label
+						button(ng-click="updateResult()").parser-form__submit Process
+				div(cg-busy="updateResultPromise").parser-form__item
+					label.parser-form__item-label.parser-form__item-label_top Result:
+					textarea.parser-form__item-field.parser-form__item-field_result {{result}}

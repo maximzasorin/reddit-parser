@@ -1,0 +1,22 @@
+{
+	"name": "reddit-parser",
+	"version": "0.0.1",
+	"homepage": "https://github.com/maximzasorin/reddit-parser",
+	"authors": [
+		"Maxim Zasorin <maximzasorin@gmail.com>"
+	],
+	"moduleType": [
+		"globals"
+	],
+	"license": "MIT",
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components"
+	],
+	"dependencies": {
+		"normalize.css": "~3.0.3",
+		"angular": "~1.4.3",
+		"angular-busy": "~4.1.3"
+	}
+}

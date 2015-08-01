@@ -1,0 +1,20 @@
+/*
+	.parser-form
+*/
+.parser-form { width: 700px; margin: 20px auto 60px; }
+.parser-form__header {  }
+.parser-form__settings { margin-bottom: 30px; }
+
+/*
+	.parser-form__item
+*/
+.parser-form__item { margin: 10px 0; }
+
+.parser-form__item-label, .parser-form__item-field, .parser-form__item-description { display: inline-block; }
+.parser-form__item-label { width: 100px; }
+.parser-form__item-label_top { vertical-align: top; }
+.parser-form__item-field {  }
+.parser-form__item-field, .parser-form__item-description { margin-right: 5px; }
+.parser-form__item-field_result { width: 594px; height: 290px; margin-right: 0; }
+
+
