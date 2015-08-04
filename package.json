@@ -4,7 +4,7 @@
 	"author": "Maxim Zasorin <maximzasorin@gmail.com>",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/nodejitsu/browsenpm.org"
+		"url": "https://github.com/maximzasorin/reddit-parser.git"
 	},
 	"dependencies": {
 		"express": "3.2.5",
